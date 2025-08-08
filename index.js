@@ -7,9 +7,15 @@ import {
   show,
   update,
 } from "./src/controllers/moviesController.js";
+import { insert as insertUser } from "./src/controllers/usersController.js";
 import { logger } from "./src/middlewares/logger.js";
 import { validateMovies } from "./src/middlewares/validateMovies.js";
 import { requireAdminQuery } from "./src/middlewares/requireAdminQuery.js";
+import { validateUser } from "./src/middlewares/userValidators.js";
+import {
+  checkEmailNotTaken,
+  hashPassword,
+} from "./src/middlewares/authValidator.js";
 
 // On lance la lecture du .env
 dotenv.config();
@@ -30,6 +36,8 @@ app.post("/movies", validateMovies, insert);
 app.put("/movies/:id", validateMovies, update);
 
 app.delete("/movies/:id", requireAdminQuery, remove);
+
+app.post("/users", validateUser, checkEmailNotTaken, hashPassword, insertUser);
 
 // Pour verifier que l'api est opérationnelle
 app.get("/", (request, response) => {
