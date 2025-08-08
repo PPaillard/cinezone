@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import {
   insert,
   list,
@@ -10,6 +11,7 @@ import {
 import {
   insert as insertUser,
   login,
+  myProfile,
 } from "./src/controllers/usersController.js";
 import { logger } from "./src/middlewares/logger.js";
 import { validateMovies } from "./src/middlewares/validateMovies.js";
@@ -19,6 +21,7 @@ import {
   checkEmailNotTaken,
   findUserByEmail,
   hashPassword,
+  requireAuth,
   validateLogin,
   verifyPassword,
 } from "./src/middlewares/authValidator.js";
@@ -31,21 +34,24 @@ const app = express();
 const serverPort = process.env.SERVER_PORT ?? 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(logger);
 
 app.get("/movies", list);
 
 app.get("/movies/:id", show);
 
-app.post("/movies", validateMovies, insert);
+app.post("/movies", requireAuth, validateMovies, insert);
 
-app.put("/movies/:id", validateMovies, update);
+app.put("/movies/:id", requireAuth, validateMovies, update);
 
-app.delete("/movies/:id", requireAdminQuery, remove);
+app.delete("/movies/:id", requireAuth, requireAdminQuery, remove);
 // Inscription
 app.post("/users", validateUser, checkEmailNotTaken, hashPassword, insertUser);
 // connexion
 app.post("/login", validateLogin, findUserByEmail, verifyPassword, login);
+// myprofile
+app.get("/profile", requireAuth, myProfile);
 
 // Pour verifier que l'api est opérationnelle
 app.get("/", (request, response) => {

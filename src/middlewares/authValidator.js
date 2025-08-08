@@ -2,6 +2,9 @@ import { body } from "express-validator";
 import database from "../../database.js";
 import bcrypt from "bcrypt";
 import { handleValidationErrors } from "./handleValidationErrors.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export async function checkEmailNotTaken(req, res, next) {
   try {
@@ -71,4 +74,20 @@ export async function verifyPassword(req, res, next) {
     return res.status(401).json({ error: "Identifiants invalides" });
   }
   next();
+}
+
+export function requireAuth(req, res, next) {
+  const { access_token } = req.cookies;
+
+  if (!access_token) {
+    return res.status(401).json({ error: "Token manquant" });
+  }
+  try {
+    // on fait passer au prochain middleware
+    req.auth = jwt.verify(access_token, process.env.JWT_SECRET);
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ error: "Token invalide ou expiré" });
+  }
 }

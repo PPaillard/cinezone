@@ -40,11 +40,27 @@ export function login(req, res) {
   );
   // httponly pour qu'il ne soit pas accessible via Javascript
   // secure pour préciser que ns n'utilisons pas HTTPS
-  // expire dans 1 jr
+  // expire dans 1 jr (à mettre dans le .env)
   res.cookie("access_token", token, {
-    httponly: true,
+    httpOnly: true,
     secure: false,
     maxAge: 60 * 60 * 24 * 1000,
   });
   res.sendStatus(200);
+}
+
+export async function myProfile(req, res) {
+  // qui est en train d'accèder à cette fonction?
+  const { sub } = req.auth;
+  try {
+    const [[user]] = await database.query(
+      "SELECT * FROM users WHERE id = ?",
+      [sub]
+    );
+    res.json(user);
+  } catch (error) {
+    // serait bien de l'enregistrer dans un fichier de log
+    console.error(error);
+    res.sendStatus(500);
+  }
 }
