@@ -9,6 +9,7 @@ import {
 } from "./src/controllers/moviesController.js";
 import { logger } from "./src/middlewares/logger.js";
 import { validateMovies } from "./src/middlewares/validateMovies.js";
+import { requireAdminQuery } from "./src/middlewares/requireAdminQuery.js";
 
 // On lance la lecture du .env
 dotenv.config();
@@ -26,9 +27,9 @@ app.get("/movies/:id", show);
 
 app.post("/movies", validateMovies, insert);
 
-app.put("/movies/:id", update);
+app.put("/movies/:id", validateMovies, update);
 
-app.delete("/movies/:id", remove);
+app.delete("/movies/:id", requireAdminQuery, remove);
 
 // Pour verifier que l'api est opérationnelle
 app.get("/", (request, response) => {

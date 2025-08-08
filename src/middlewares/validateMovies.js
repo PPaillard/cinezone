@@ -18,7 +18,20 @@ export const validateMovies = [
     .trim()
     .notEmpty()
     .withMessage("Release year is required")
-    .isInt({ min: 1900, max: 2030 })
+    .isInt({
+      min: 1900,
+      max: 2030,
+    }) /* On devrait utiliser un validateur custom pr générer l'année de fin */
     .withMessage("Release year must be between 1900 & 2030"),
+  body("rating")
+    .notEmpty()
+    .withMessage("Rating is required")
+    .isFloat({ min: 0, max: 10 })
+    .withMessage("Rating must be between 0 & 10"),
+  body("category_id")
+    .notEmpty()
+    .withMessage("Category id is required")
+    .isInt()
+    .withMessage("Category id should be a integer"),
   handleValidationErrors,
 ];
