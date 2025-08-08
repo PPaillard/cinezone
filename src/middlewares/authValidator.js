@@ -1,5 +1,7 @@
+import { body } from "express-validator";
 import database from "../../database.js";
 import bcrypt from "bcrypt";
+import { handleValidationErrors } from "./handleValidationErrors.js";
 
 export async function checkEmailNotTaken(req, res, next) {
   try {
@@ -34,4 +36,39 @@ export async function hashPassword(req, res, next) {
     console.error(err);
     res.sendStatus(500);
   }
+}
+
+export const validateLogin = [
+  body("email").isEmail().withMessage("Invalid email format"),
+  body("password")
+    .isLength({ min: 10 })
+    .withMessage("Password must have at least 10 caracters"),
+  handleValidationErrors,
+];
+
+export async function findUserByEmail(req, res, next) {
+  const { email } = req.body;
+
+  const [[user]] = await database.query("SELECT * FROM users WHERE email = ?", [
+    email,
+  ]);
+
+  if (!user) {
+    return res.status(401).json({ error: "Identifiants invalides" });
+  }
+  // On passe le user aux prochains middleware.
+  req.user = user;
+  next();
+}
+
+export async function verifyPassword(req, res, next) {
+  const { password } = req.body;
+  const { user } = req;
+
+  const ok = await bcrypt.compare(password, user.password);
+  // Si la comparaison s'est mal passée
+  if (!ok) {
+    return res.status(401).json({ error: "Identifiants invalides" });
+  }
+  next();
 }

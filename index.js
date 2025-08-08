@@ -7,14 +7,20 @@ import {
   show,
   update,
 } from "./src/controllers/moviesController.js";
-import { insert as insertUser } from "./src/controllers/usersController.js";
+import {
+  insert as insertUser,
+  login,
+} from "./src/controllers/usersController.js";
 import { logger } from "./src/middlewares/logger.js";
 import { validateMovies } from "./src/middlewares/validateMovies.js";
 import { requireAdminQuery } from "./src/middlewares/requireAdminQuery.js";
 import { validateUser } from "./src/middlewares/userValidators.js";
 import {
   checkEmailNotTaken,
+  findUserByEmail,
   hashPassword,
+  validateLogin,
+  verifyPassword,
 } from "./src/middlewares/authValidator.js";
 
 // On lance la lecture du .env
@@ -36,8 +42,10 @@ app.post("/movies", validateMovies, insert);
 app.put("/movies/:id", validateMovies, update);
 
 app.delete("/movies/:id", requireAdminQuery, remove);
-
+// Inscription
 app.post("/users", validateUser, checkEmailNotTaken, hashPassword, insertUser);
+// connexion
+app.post("/login", validateLogin, findUserByEmail, verifyPassword, login);
 
 // Pour verifier que l'api est opérationnelle
 app.get("/", (request, response) => {
