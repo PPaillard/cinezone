@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import {
   insert,
@@ -35,17 +36,18 @@ const serverPort = process.env.SERVER_PORT ?? 3000;
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 app.use(logger);
 
 app.get("/movies", list);
 
 app.get("/movies/:id", show);
 
-app.post("/movies", requireAuth, validateMovies, insert);
+app.post("/movies", validateMovies, insert);
 
-app.put("/movies/:id", requireAuth, validateMovies, update);
+app.put("/movies/:id", validateMovies, update);
 
-app.delete("/movies/:id", requireAuth, requireAdminQuery, remove);
+app.delete("/movies/:id", remove);
 // Inscription
 app.post("/users", validateUser, checkEmailNotTaken, hashPassword, insertUser);
 // connexion
