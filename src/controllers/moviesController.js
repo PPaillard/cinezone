@@ -9,7 +9,7 @@ export function list(req, res) {
     .catch((error) => {
       // serait bien de l'enregistrer dans un fichier de log
       console.error(error);
-      res.sendStatus(500);
+      res.status(500).send({ message: "Server error" });
     });
 }
 
@@ -19,7 +19,7 @@ export function show(req, res) {
     .query("SELECT * FROM movies WHERE id=?", [id])
     .then(([movies]) => {
       if (movies.length === 0) {
-        res.sendStatus(404);
+        res.status(404).send({ message: "Not found" });
       } else {
         res.json(movies[0]);
       }
@@ -27,13 +27,13 @@ export function show(req, res) {
     .catch((error) => {
       // serait bien de l'enregistrer dans un fichier de log
       console.error(error);
-      res.sendStatus(500);
+      res.status(500).send({ message: "Server error" });
     });
 }
 
 export function insert(req, res) {
   if (!req.body) {
-    res.sendStatus(400);
+    res.status(400).send({ message: "Malformed request" });
   }
 
   const { title, director, rating, release_year, category_id } = req.body;
@@ -50,14 +50,14 @@ export function insert(req, res) {
     .catch((error) => {
       // serait bien de l'enregistrer dans un fichier de log
       console.error(error);
-      res.sendStatus(500);
+      res.status(500).send({ message: "Server error" });
     });
 }
 
 export async function update(req, res) {
   try {
     if (!req.body) {
-      res.sendStatus(400);
+      res.status(400).send({ message: "Malformed request" });
     }
     const id = parseInt(req.params.id);
     const { title, director, rating, release_year, category_id } = req.body;
@@ -67,11 +67,12 @@ export async function update(req, res) {
       [title, director, rating, release_year, category_id, id]
     );
 
-    if (result.affectedRows === 0) res.sendStatus(404);
-    else res.sendStatus(204);
+    if (result.affectedRows === 0)
+      res.status(404).send({ message: "Not found" });
+    else res.status(204).send({ message: "No content" });
   } catch (error) {
     console.error(error);
-    res.sendStatus(500);
+    res.status(500).send({ message: "Server error" });
   }
 }
 
@@ -81,8 +82,9 @@ export async function remove(req, res) {
     const [result] = await database.query("DELETE FROM movies WHERE id=?", [
       id,
     ]);
-    if (result.affectedRows === 0) res.sendStatus(404);
-    else res.sendStatus(204);
+    if (result.affectedRows === 0)
+      res.status(404).send({ message: "Not found" });
+    else res.status(204).send({ message: "No content" });
   } catch (error) {
     console.error(error);
     res.sendStatus;

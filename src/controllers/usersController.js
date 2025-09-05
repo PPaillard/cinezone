@@ -15,7 +15,7 @@ export async function insert(req, res) {
     res.status(201).json({ id: result.insertId });
   } catch (err) {
     console.error(err);
-    res.sendStatus(500);
+    res.status(500).send({ message: "Server error" });
   }
 }
 
@@ -60,6 +60,6 @@ export async function myProfile(req, res) {
   } catch (error) {
     // serait bien de l'enregistrer dans un fichier de log
     console.error(error);
-    res.sendStatus(500);
+    res.status(500).send({ message: "Server error" });
   }
 }

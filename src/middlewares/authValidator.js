@@ -22,7 +22,7 @@ export async function checkEmailNotTaken(req, res, next) {
     next();
   } catch (err) {
     console.error(err);
-    res.sendStatus(500);
+    res.status(500).send({ message: "Server error" });
   }
 }
 
@@ -37,7 +37,7 @@ export async function hashPassword(req, res, next) {
     next();
   } catch (err) {
     console.error(err);
-    res.sendStatus(500);
+    res.status(500).send({ message: "Server error" });
   }
 }
 
