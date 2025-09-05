@@ -46,17 +46,16 @@ export function login(req, res) {
     secure: false,
     maxAge: 60 * 60 * 24 * 1000,
   });
-  res.sendStatus(200);
+  res.status(200).send({ message: "ok" });
 }
 
 export async function myProfile(req, res) {
   // qui est en train d'accèder à cette fonction?
   const { sub } = req.auth;
   try {
-    const [[user]] = await database.query(
-      "SELECT * FROM users WHERE id = ?",
-      [sub]
-    );
+    const [[user]] = await database.query("SELECT * FROM users WHERE id = ?", [
+      sub,
+    ]);
     res.json(user);
   } catch (error) {
     // serait bien de l'enregistrer dans un fichier de log
