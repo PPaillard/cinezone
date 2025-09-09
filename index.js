@@ -61,6 +61,15 @@ app.post("/login", validateLogin, findUserByEmail, verifyPassword, login);
 // myprofile
 app.get("/profile", requireAuth, myProfile);
 
+app.get("/logout", (req, res) => {
+  res.clearCookie("access_token", {
+    httpOnly: true, // sécurise le cookie (pas accessible via JS)
+    secure: true, // à activer si HTTPS
+    sameSite: "strict", // évite CSRF basique
+  });
+  return res.status(200).json({ message: "Déconnecté avec succès" });
+});
+
 // Pour verifier que l'api est opérationnelle
 app.get("/", (request, response) => {
   response.send("L'api fonctionne !");
