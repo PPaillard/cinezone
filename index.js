@@ -62,11 +62,7 @@ app.post("/login", validateLogin, findUserByEmail, verifyPassword, login);
 app.get("/profile", requireAuth, myProfile);
 
 app.get("/logout", (req, res) => {
-  res.clearCookie("access_token", {
-    httpOnly: true, // sécurise le cookie (pas accessible via JS)
-    secure: true, // à activer si HTTPS
-    sameSite: "strict", // évite CSRF basique
-  });
+  res.clearCookie("access_token");
   return res.status(200).json({ message: "Déconnecté avec succès" });
 });
 
