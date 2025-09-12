@@ -41,11 +41,11 @@ export function login(req, res) {
   // httponly pour qu'il ne soit pas accessible via Javascript
   // secure pour préciser que ns n'utilisons pas HTTPS
   // expire dans 1 jr (à mettre dans le .env)
-  res.cookie("access_token", token, {
-    httpOnly: true,
-    secure: false,
-    maxAge: 60 * 60 * 24 * 1000,
-    sameSite: "none",
+  res.cookie(process.env.COOKIE_NAME, token, {
+    httpOnly: process.env.COOKIE_HTTP_ONLY,
+    secure: process.env.COOKIE_SECURE,
+    maxAge: process.env.COOKIE_MAX_AGE,
+    sameSite: process.env.COOKIE_SAME_SITE,
   });
   res.status(200).send({ message: "ok" });
 }
