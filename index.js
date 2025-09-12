@@ -68,7 +68,7 @@ app.get("/logout", (req, res) => {
 
 // Pour verifier que l'api est opérationnelle
 app.get("/", (request, response) => {
-  response.send("L'api fonctionne !");
+  response.send("L'api fonctionne !!! Je suis très content");
 });
 
 app.listen(serverPort, () => {
